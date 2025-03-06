@@ -90,13 +90,77 @@ ORDER BY CODE;
 
 -- Columnas que son claves primarias (PK)
 
+
 SELECT COUNT(*) AS cantidad_unicos
 FROM (
-    SELECT Customer_ID
-    FROM [DATAEX].[003_clientes]
-    GROUP BY Customer_ID
+    SELECT CODE
+    FROM [DATAEX].[001_sales]
+    GROUP BY CODE
     HAVING COUNT(*) = 1
 ) AS subquery;
 
 SELECT COUNT(*) AS total_filas
-FROM [DATAEX].[003_clientes];
+FROM [DATAEX].[001_sales];
+
+SELECT COUNT(*) AS cantidad_unicos
+FROM (
+    SELECT CODE
+    FROM [DATAEX].[017_logist]
+    GROUP BY CODE
+    HAVING COUNT(*) = 1
+) AS subquery;
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[017_logist];
+
+SELECT COUNT(*) AS cantidad_unicos
+FROM (
+    SELECT CODE
+    FROM [DATAEX].[018_edad]
+    GROUP BY CODE
+    HAVING COUNT(*) = 1
+) AS subquery;
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[018_edad];
+
+
+-- Contar valores únicos en [001_sales]
+SELECT 
+    '001_sales' AS tabla,
+    COUNT(*) AS cantidad_unicos
+FROM (
+    SELECT CODE
+    FROM [DATAEX].[001_sales]
+    GROUP BY CODE
+    HAVING COUNT(*) = 1
+) AS subquery
+UNION ALL
+-- Contar valores totales en [001_sales]
+SELECT 
+    '001_sales' AS tabla,
+    COUNT(*) AS total_filas
+FROM [DATAEX].[001_sales]
+UNION ALL
+-- Contar valores únicos en [017_logist]
+SELECT 
+    '017_logist' AS tabla,
+    COUNT(*) AS cantidad_unicos
+FROM (
+    SELECT CODE
+    FROM [DATAEX].[017_logist]
+    GROUP BY CODE
+    HAVING COUNT(*) = 1
+) AS subquery
+UNION ALL
+-- Contar valores totales en [017_logist]
+SELECT 
+    '017_logist' AS tabla,
+    COUNT(*) AS total_filas
+FROM [DATAEX].[017_logist];
+
+-- Buscar coincidencias de CODE entre ambas tablas
+SELECT COUNT(*) AS coincidencias
+FROM [DATAEX].[001_sales] AS s
+JOIN [DATAEX].[017_logist] AS l
+ON s.CODE = l.CODE;

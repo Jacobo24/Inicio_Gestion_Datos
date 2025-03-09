@@ -164,3 +164,17 @@ SELECT COUNT(*) AS coincidencias
 FROM [DATAEX].[001_sales] AS s
 JOIN [DATAEX].[017_logist] AS l
 ON s.CODE = l.CODE;
+
+
+
+SELECT 
+    (SELECT COUNT(*) FROM [DATAEX].[005_cp]) AS Total_005_cp,
+    (SELECT COUNT(*) FROM [DATAEX].[019_Mosaic]) AS Total_019_Mosaic,
+    (SELECT COUNT(*) FROM [DATAEX].[005_cp] s JOIN [DATAEX].[019_Mosaic] l ON s.CP = l.CP) AS Coincidencias;
+
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[019_Mosaic];
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[005_cp];

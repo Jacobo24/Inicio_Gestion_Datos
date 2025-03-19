@@ -9,24 +9,18 @@ SELECT
     producto.TIPO_CARROCERIA AS tipo_carroceria,
     producto.Kw AS potencia_kw,
 
-    -- Costos asociados al producto
-    costes.Costetransporte AS coste_transporte,
-    costes.GastosMarketing AS gastos_marketing,
-    costes.Margen AS margen,
-    costes.Margendistribuidor AS margen_distribuidor,
-    costes.Modelo AS modelo_costes,
-
     -- Agregaciones de ventas
     COUNT(sales.Id_Producto) AS cantidad_vendida,
     SUM(sales.PVP) AS pvp_total
 
 FROM [DATAEX].[001_sales] AS sales
-LEFT JOIN [DATAEX].[006_producto] AS producto ON sales.Id_Producto = producto.Id_Producto
-LEFT JOIN [DATAEX].[014_categoría_producto] AS categoria ON producto.CATEGORIA_ID = categoria.CATEGORIA_ID
-LEFT JOIN [DATAEX].[015_fuel] AS fuel ON producto.Fuel_ID = fuel.Fuel_ID
-LEFT JOIN [DATAEX].[007_costes] AS costes ON producto.Modelo = costes.Modelo
+LEFT JOIN [DATAEX].[006_producto] AS producto 
+    ON sales.Id_Producto = producto.Id_Producto
+LEFT JOIN [DATAEX].[014_categoría_producto] AS categoria 
+    ON producto.CATEGORIA_ID = categoria.CATEGORIA_ID
+LEFT JOIN [DATAEX].[015_fuel] AS fuel 
+    ON producto.Fuel_ID = fuel.Fuel_ID
 
--- Agrupación por producto para calcular las métricas correctamente
 GROUP BY 
     producto.Id_Producto,
     producto.Modelo,
@@ -36,9 +30,4 @@ GROUP BY
     fuel.FUEL,
     producto.TRANSMISION_ID,
     producto.TIPO_CARROCERIA,
-    producto.Kw,
-    costes.Costetransporte,
-    costes.GastosMarketing,
-    costes.Margen,
-    costes.Margendistribuidor,
-    costes.Modelo;
+    producto.Kw;

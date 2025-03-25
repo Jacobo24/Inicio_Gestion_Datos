@@ -38,3 +38,6 @@ LEFT JOIN [DATAEX].[006_producto] AS producto
     ON sales.Id_Producto = producto.Id_Producto
 LEFT JOIN [DATAEX].[007_costes] AS costes 
     ON producto.Modelo = costes.Modelo;
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[001_sales];

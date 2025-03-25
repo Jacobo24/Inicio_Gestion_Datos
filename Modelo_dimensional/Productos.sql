@@ -31,3 +31,6 @@ GROUP BY
     producto.TRANSMISION_ID,
     producto.TIPO_CARROCERIA,
     producto.Kw;
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[006_producto];

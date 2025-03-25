@@ -13,3 +13,6 @@ SELECT
     date.InicioMes AS inicio_de_mes,
     date.FinMes AS fin_de_mes
 FROM [DATAEX].[002_date] AS date;
+
+SELECT COUNT(*) AS total_filas
+FROM [DATAEX].[002_date];

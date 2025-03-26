@@ -9,6 +9,8 @@ SELECT
     sales.MOTIVO_VENTA_ID AS id_motivo_venta,
     sales.FORMA_PAGO_ID AS id_forma_pago,
     logist.Origen_Compra_ID AS id_origen_compra,
+    logist.Fue_Lead AS fue_lead,
+    logist.Lead_compra AS lead_compra,
     
     -- Datos de la tabla de costes
     costes.Costetransporte AS coste_transporte,

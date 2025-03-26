@@ -26,7 +26,7 @@ SELECT
     mosaic.K
 FROM [DATAEX].[003_clientes] AS clientes
 LEFT JOIN [DATAEX].[005_cp] cp ON clientes.CODIGO_POSTAL = cp.CP -- Join con CODIGO_POSTAL (1:0..1).
-LEFT JOIN [DATAEX].[019_mosaic] mosaic ON TRY_CAST(cp.codigopostalid AS INT) = TRY_CAST(mosaic.CP AS INT); -- Join con CP (1:0..1).
+LEFT JOIN [DATAEX].[019_mosaic] mosaic ON TRY_CAST(cp.codigopostalid AS INT) = TRY_CAST(mosaic.CP AS INT) -- Join con CP (1:0..1).
 
 
 

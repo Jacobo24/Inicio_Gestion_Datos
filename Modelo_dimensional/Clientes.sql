@@ -1,18 +1,18 @@
 SELECT 
-    clientes.Customer_ID AS id_cliente,
-    clientes.CODIGO_POSTAL AS codigo_postal,
-    clientes.Edad AS edad,
-    clientes.GENERO AS genero,
-    clientes.RENTA_MEDIA_ESTIMADA AS renta_media,
-    clientes.STATUS_SOCIAL AS estado_social,
-    clientes.Fecha_nacimiento AS fecha_nacimiento,
-    clientes.ENCUESTA_CLIENTE_ZONA_TALLER AS encuesta_taller,
-    clientes.ENCUESTA_ZONA_CLIENTE_VENTA AS encuesta_venta,
-    cp.poblacion AS ciudad,
-    cp.provincia AS provincia,
-    mosaic.Max_Mosaic AS segmento_mosaic,
-    mosaic.Max_Mosaic_G AS segmento_mosaic_g,
-    mosaic.Renta_Media AS renta_media_mosaic,
+    clientes.Customer_ID,
+    clientes.CODIGO_POSTAL,
+    clientes.Edad,
+    clientes.GENERO,
+    clientes.RENTA_MEDIA_ESTIMADA,
+    clientes.STATUS_SOCIAL,
+    clientes.Fecha_nacimiento,
+    clientes.ENCUESTA_CLIENTE_ZONA_TALLER,
+    clientes.ENCUESTA_ZONA_CLIENTE_VENTA,
+    cp.poblacion,
+    cp.provincia,
+    mosaic.Max_Mosaic,
+    mosaic.Max_Mosaic_G,
+    mosaic.Renta_Media,
     mosaic.A,
     mosaic.B,
     mosaic.C,
@@ -30,5 +30,4 @@ LEFT JOIN [DATAEX].[019_mosaic] mosaic ON TRY_CAST(cp.codigopostalid AS INT) = T
 
 
 
-SELECT COUNT(*) AS total_filas
-FROM [DATAEX].[003_clientes];
+-- SELECT COUNT(*) AS total_filas FROM [DATAEX].[003_clientes];

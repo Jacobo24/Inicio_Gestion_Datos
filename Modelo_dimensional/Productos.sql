@@ -1,13 +1,13 @@
 SELECT 
-    producto.Id_Producto AS id_producto,
-    producto.Modelo AS modelo,
-    producto.CATEGORIA_ID AS id_categoria,
-    categoria.Equipamiento AS categoria_producto,
-    producto.Fuel_ID AS id_combustible,
-    fuel.FUEL AS tipo_combustible,
+    producto.Id_Producto,
+    producto.Modelo,
+    producto.CATEGORIA_ID,
+    categoria.Equipamiento,
+    producto.Fuel_ID,
+    fuel.FUEL,
     producto.TRANSMISION_ID AS id_transmision,
-    producto.TIPO_CARROCERIA AS tipo_carroceria,
-    producto.Kw AS potencia_kw,
+    producto.TIPO_CARROCERIA,
+    producto.Kw,
 
     -- Agregaciones de ventas
     COUNT(sales.Id_Producto) AS cantidad_vendida,
@@ -32,5 +32,4 @@ GROUP BY
     producto.TIPO_CARROCERIA,
     producto.Kw;
 
-SELECT COUNT(*) AS total_filas
-FROM [DATAEX].[006_producto];
+-- SELECT COUNT(*) AS total_filas FROM [DATAEX].[006_producto];

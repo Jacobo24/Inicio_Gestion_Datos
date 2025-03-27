@@ -1,45 +1,57 @@
-SELECT 
-    sales.CODE AS codigo_venta,
-    sales.Customer_ID AS id_cliente,
-    sales.TIENDA_ID AS id_tienda,
-    tienda.ZONA_ID AS id_zona,
-    tienda.PROVINCIA_ID AS id_provincia,
-    sales.Id_Producto AS id_producto,
-    sales.Sales_Date AS fecha_venta,
-    sales.MOTIVO_VENTA_ID AS id_motivo_venta,
-    sales.FORMA_PAGO_ID AS id_forma_pago,
-    logist.Origen_Compra_ID AS id_origen_compra,
-    logist.Fue_Lead AS fue_lead,
-    logist.Lead_compra AS lead_compra,
-    
-    -- Datos de la tabla de costes
-    costes.Costetransporte AS coste_transporte,
-    costes.GastosMarketing AS gastos_marketing,
-    costes.Margen AS margen,
-    costes.Margendistribuidor AS margen_distribuidor,
-    costes.Modelo AS modelo_costes,
-    
-    -- Cálculo de Margen en Euros Bruto
-    ROUND(sales.PVP * costes.Margen * 0.01 * (1 - sales.IMPUESTOS / 100), 2) AS Margen_eur_bruto,
-    
-    -- Cálculo de Margen en Euros Neto
-    ROUND(
-        sales.PVP * costes.Margen * 0.01 * (1 - sales.IMPUESTOS / 100)
-        - sales.COSTE_VENTA_NO_IMPUESTOS 
-        - (costes.Margendistribuidor * 0.01 + costes.GastosMarketing * 0.01 - costes.Comisión_Marca * 0.01)
-          * sales.PVP * (1 - sales.IMPUESTOS / 100)
-        - costes.Costetransporte, 
-    2) AS Margen_eur
+SELECT
+    sales.[CODE],
+    tienda.[TIENDA_ID],
+    clientes.[Customer_ID],
+    producto.[Id_Producto],
+    tiempo.[Date],
+    sales.[Sales_Date],
+    sales.[PVP],
+    sales.[MANTENIMIENTO_GRATUITO],
+    sales.[SEGURO_BATERIA_LARGO_PLAZO],
+    sales.[FIN_GARANTIA],
+    sales.[COSTE_VENTA_NO_IMPUESTOS],
+    sales.[IMPUESTOS],
+    sales.[EN_GARANTIA],
+    sales.[EXTENSION_GARANTIA],
+    costes.[Margen],
+    costes.[Margendistribuidor],
+    costes.[Costetransporte],
+    costes.[GastosMarketing],
+    costes.[Comisión_marca],
+    logistic.[Lead_compra],
+    -- Añadir los leads y dias desde la ultima revison 
+    logistic.[fue_Lead],
+    rev.[DIAS_DESDE_ULTIMA_REVISION],
+    edad.[Car_Age],
+    rev.[km_ultima_revision],
 
-FROM [DATAEX].[001_sales] AS sales
-LEFT JOIN [DATAEX].[011_tienda] AS tienda 
-    ON sales.TIENDA_ID = tienda.TIENDA_ID
-LEFT JOIN [DATAEX].[017_logist] AS logist 
-    ON sales.CODE = logist.CODE
-LEFT JOIN [DATAEX].[006_producto] AS producto 
-    ON sales.Id_Producto = producto.Id_Producto
-LEFT JOIN [DATAEX].[007_costes] AS costes 
-    ON producto.Modelo = costes.Modelo;
 
-SELECT COUNT(*) AS total_filas
-FROM [DATAEX].[001_sales];
+
+    -- Cálculo de Margen Bruto en euros
+    ROUND(sales.PVP * (Margen)*0.01 * (1 - IMPUESTOS / 100), 2) AS Margen_eur_bruto,
+
+    ROUND(sales.PVP * (Margen)*0.01 * (1 - IMPUESTOS / 100) - sales.COSTE_VENTA_NO_IMPUESTOS - (Margendistribuidor*0.01 + GastosMarketing*0.01-Comisión_Marca*0.01) * sales.PVP * (1 - IMPUESTOS / 100) - Costetransporte, 2) AS Margen_eur,
+    CASE 
+        WHEN TRY_CONVERT(INT, rev.DIAS_DESDE_ULTIMA_REVISION) > 400 THEN 1 
+        ELSE 0 
+    END AS Churn
+
+FROM [DATAEX].[001_sales] sales
+LEFT JOIN [DATAEX].[011_tienda] tienda 
+    ON sales.Tienda_ID = tienda.TIENDA_ID
+LEFT JOIN [DATAEX].[003_clientes] clientes 
+    ON sales.Customer_ID = clientes.Customer_ID
+LEFT JOIN [DATAEX].[002_date] tiempo 
+    ON sales.Sales_Date = tiempo.Date
+LEFT JOIN [DATAEX].[017_logist] logistic 
+    ON sales.CODE = logistic.CODE
+LEFT JOIN [DATAEX].[004_rev] rev 
+    ON sales.CODE = rev.CODE
+LEFT JOIN [DATAEX].[018_edad] edad 
+    ON sales.CODE = edad.CODE
+
+
+LEFT JOIN [DATAEX].[006_producto] producto ON sales.Id_Producto = producto.Id_Producto
+LEFT JOIN [DATAEX].[007_costes] costes ON producto.Modelo = costes.Modelo;
+
+-- SELECT COUNT(*) AS total_filas FROM [DATAEX].[001_sales];

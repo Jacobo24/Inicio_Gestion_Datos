@@ -23,6 +23,7 @@ SELECT
     rev.[DIAS_DESDE_ULTIMA_REVISION],
     edad.[Car_Age],
     rev.[km_ultima_revision],
+    rev.[Revisiones],
 
     -- Cálculo de Margen en Euros Bruto
     ROUND(sales.[PVP] * costes.[Margen] * 0.01 * (1 - sales.[IMPUESTOS] / 100), 2) AS Margen_eur_bruto,

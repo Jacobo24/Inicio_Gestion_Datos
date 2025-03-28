@@ -24,7 +24,8 @@ SELECT
     edad.[Car_Age],
     rev.[km_ultima_revision],
     rev.[Revisiones],
-
+    cp.[lon],
+    cp.[lat],
     -- Cálculo de Margen en Euros Bruto
     ROUND(sales.[PVP] * costes.[Margen] * 0.01 * (1 - sales.[IMPUESTOS] / 100), 2) AS Margen_eur_bruto,
 
@@ -53,8 +54,8 @@ SELECT
         WHEN rev.[DIAS_DESDE_ULTIMA_REVISION] IS NULL 
              OR rev.[DIAS_DESDE_ULTIMA_REVISION] = ''
             THEN CASE
-                    WHEN edad.[Car_Age] <= 1 THEN 0    -- Coche nuevo: No churn
-                    WHEN edad.[Car_Age] > 1 THEN 1   -- Coche viejo: Churn
+                    WHEN edad.[Car_Age] < 1 THEN 0    -- Coche nuevo: No churn
+                    WHEN edad.[Car_Age] >= 1 THEN 1   -- Coche viejo: Churn
                     ELSE 1
                  END
         -- Caso 4: Otros casos inesperados: Churn por precaución
@@ -66,6 +67,8 @@ LEFT JOIN [DATAEX].[011_tienda] tienda
     ON sales.[TIENDA_ID] = tienda.[TIENDA_ID]
 LEFT JOIN [DATAEX].[003_clientes] clientes 
     ON sales.[Customer_ID] = clientes.[Customer_ID]
+LEFT JOIN [DATAEX].[005_cp] cp
+    ON clientes.[CODIGO_POSTAL] = cp.[CP]
 LEFT JOIN [DATAEX].[002_date] tiempo 
     ON sales.[Sales_Date] = tiempo.[Date]
 LEFT JOIN [DATAEX].[017_logist] logistic 

@@ -27,29 +27,15 @@ FROM churn_coef;
 WITH retencion_cte AS (
     SELECT
         c.Customer_ID,
-        CASE 
-            WHEN 1 - (
+        LEAST(1, GREATEST(0,
+            1 - (
                 @b_intercepto +
-                AVG(f.[PVP]) * @b_pvp +
-                AVG(f.[Car_Age]) * @b_edad +
-                AVG(f.[km_ultima_revision]) * @b_km +
-                AVG(f.[Revisiones]) * @b_revisiones
-            ) < 0 THEN 0
-            WHEN 1 - (
-                @b_intercepto +
-                AVG(f.[PVP]) * @b_pvp +
-                AVG(f.[Car_Age]) * @b_edad +
-                AVG(f.[km_ultima_revision]) * @b_km +
-                AVG(f.[Revisiones]) * @b_revisiones
-            ) > 1 THEN 1
-            ELSE 1 - (
-                @b_intercepto +
-                AVG(f.[PVP]) * @b_pvp +
-                AVG(f.[Car_Age]) * @b_edad +
-                AVG(f.[km_ultima_revision]) * @b_km +
-                AVG(f.[Revisiones]) * @b_revisiones
+                AVG(f.PVP) * @b_pvp +
+                MAX(f.Car_Age) * @b_edad +
+                AVG(f.km_ultima_revision) * @b_km +
+                AVG(f.Revisiones) * @b_revisiones
             )
-        END AS retencion_estimado
+        )) AS retencion_estimado
     FROM dim_client c
     LEFT JOIN fact_sales f ON c.Customer_ID = f.Customer_ID
     GROUP BY c.Customer_ID

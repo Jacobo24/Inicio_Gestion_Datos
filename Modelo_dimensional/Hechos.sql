@@ -57,7 +57,7 @@ SELECT
                     ELSE 1
                  END
         -- Caso 4: Otros casos inesperados: Churn por precaución
-        ELSE 0
+        ELSE 1
     END AS Churn
 
 FROM [DATAEX].[001_sales] sales

@@ -13,7 +13,7 @@ SELECT
     @b_pvp        = MAX(CASE WHEN Variable = 'PVP' THEN Coeficiente END),
     @b_edad       = MAX(CASE WHEN Variable = 'Edad_Media_Coche' THEN Coeficiente END),
     @b_km         = MAX(CASE WHEN Variable = 'Km_Medio_Por_Revision' THEN Coeficiente END),
-    @b_revisiones = MAX(CASE WHEN Variable = 'Revisiones' THEN Coeficiente END)
+    @b_revisiones = MAX(CASE WHEN Variable = 'Margen' THEN Coeficiente END)
 FROM churn_coef;
 
 -- CTE Retención: Calcular la probabilidad de retención para cada cliente.
@@ -26,7 +26,7 @@ WITH retencion_cte AS (
                 AVG(f.PVP) * @b_pvp +
                 MAX(f.Car_Age) * @b_edad +
                 AVG(f.km_ultima_revision) * @b_km +
-                AVG(f.Revisiones) * @b_revisiones
+                AVG(f.Margen_eur) * @b_revisiones
             )
         )) AS retencion_estimado
     FROM dim_client c
@@ -46,29 +46,29 @@ SELECT
 
     -- CLTV (Customer Lifetime Value).
         -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 1 año.
-    AVG(f.Revisiones) * (
+    AVG(f.Margen_eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1)
     ) AS CLTV_1_anio,
         -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 2 años.
-    AVG(f.Revisiones) * (
+    AVG(f.Margen_eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
         POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2)
     ) AS CLTV_2_anios,
         -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 3 años.
-    AVG(f.Revisiones) * (
+    AVG(f.Margen_eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
         POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
         POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3)
     ) AS CLTV_3_anios,
         -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 4 años.
-    AVG(f.Revisiones) * (
+    AVG(f.Margen_eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
         POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
         POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3) +
         POWER(r.retencion_estimado, 4) / POWER(1 + 0.07, 4)
     ) AS CLTV_4_anios,
         -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 5 años.
-    AVG(f.Revisiones) * (
+    AVG(f.Margen_eur) * (
         POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
         POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
         POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3) +

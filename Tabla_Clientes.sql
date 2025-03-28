@@ -1,4 +1,4 @@
-SELECT 
+SELECT
     c.Customer_ID,  -- Solo el Customer_ID de Dim_client
     c.Edad,
     c.Fecha_nacimiento,
@@ -44,7 +44,7 @@ SELECT
     f.Margen_eur,
 
     -- 🔹 Sumatorio de leads con conversión segura
-    COALESCE(TRY_CONVERT(INT, f.Lead_compra), 0) + 
+    COALESCE(TRY_CONVERT(INT, f.Lead_compra), 0) +
     COALESCE(TRY_CONVERT(INT, f.fue_Lead), 0) AS Total_Leads
 
 FROM [dbo].[dim_client] AS c

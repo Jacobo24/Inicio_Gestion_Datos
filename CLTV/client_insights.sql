@@ -1,13 +1,6 @@
--- Si la tabla de salida ya existe, se elimina.
-IF OBJECT_ID('client_insights', 'U') IS NOT NULL
-    DROP TABLE client_insights;
-
 -- Declaración de Variables.
 DECLARE
-    -- Tasa de descuento para cálculos financieros.
-    @discount_rate FLOAT = 0.07,
-
-    -- Coeficientes del modelo de churn (adaptados a los nombres de tus variables).
+    -- Coeficientes del modelo de churn.
     @b_intercepto FLOAT,
     @b_pvp FLOAT,
     @b_edad FLOAT,
@@ -46,40 +39,43 @@ SELECT
     c.Customer_ID,
     c.Edad,
     -- Modelo Predictivo: Probabilidad de Churn y Retención.
-    CASE 
-        WHEN r.retencion_estimado IS NULL THEN NULL
-        ELSE 1 - r.retencion_estimado
-    END AS churn_estimado,
+        -- CHURN.
+    LEAST(1, GREATEST(0, 1 - r.retencion_estimado)) AS churn_estimado,
+        -- RETENCIÓN DESDE EL CTE
     r.retencion_estimado,
 
-    -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 1 a 5 años.
-    AVG(f.Margen_Eur) * (
-        POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1)
+    -- CLTV (Customer Lifetime Value).
+        -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 1 año.
+    AVG(f.Revisiones) * (
+        POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1)
     ) AS CLTV_1_anio,
-    AVG(f.Margen_Eur) * (
-        POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1) +
-        POWER(r.retencion_estimado, 2) / POWER(1 + @discount_rate, 2)
+        -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 2 años.
+    AVG(f.Revisiones) * (
+        POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
+        POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2)
     ) AS CLTV_2_anios,
-    AVG(f.Margen_Eur) * (
-        POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1) +
-        POWER(r.retencion_estimado, 2) / POWER(1 + @discount_rate, 2) +
-        POWER(r.retencion_estimado, 3) / POWER(1 + @discount_rate, 3)
+        -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 3 años.
+    AVG(f.Revisiones) * (
+        POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
+        POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
+        POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3)
     ) AS CLTV_3_anios,
-    AVG(f.Margen_Eur) * (
-        POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1) +
-        POWER(r.retencion_estimado, 2) / POWER(1 + @discount_rate, 2) +
-        POWER(r.retencion_estimado, 3) / POWER(1 + @discount_rate, 3) +
-        POWER(r.retencion_estimado, 4) / POWER(1 + @discount_rate, 4)
+        -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 4 años.
+    AVG(f.Revisiones) * (
+        POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
+        POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
+        POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3) +
+        POWER(r.retencion_estimado, 4) / POWER(1 + 0.07, 4)
     ) AS CLTV_4_anios,
-    AVG(f.Margen_Eur) * (
-        POWER(r.retencion_estimado, 1) / POWER(1 + @discount_rate, 1) +
-        POWER(r.retencion_estimado, 2) / POWER(1 + @discount_rate, 2) +
-        POWER(r.retencion_estimado, 3) / POWER(1 + @discount_rate, 3) +
-        POWER(r.retencion_estimado, 4) / POWER(1 + @discount_rate, 4) +
-        POWER(r.retencion_estimado, 5) / POWER(1 + @discount_rate, 5)
+        -- CLTV (Customer Lifetime Value): Valor del cliente a lo largo de 5 años.
+    AVG(f.Revisiones) * (
+        POWER(r.retencion_estimado, 1) / POWER(1 + 0.07, 1) +
+        POWER(r.retencion_estimado, 2) / POWER(1 + 0.07, 2) +
+        POWER(r.retencion_estimado, 3) / POWER(1 + 0.07, 3) +
+        POWER(r.retencion_estimado, 4) / POWER(1 + 0.07, 4) +
+        POWER(r.retencion_estimado, 5) / POWER(1 + 0.07, 5)
     ) AS CLTV_5_anios
 
-INTO client_insights  -- Creación de la tabla de salida.
 FROM dim_client c
 LEFT JOIN fact_sales f ON c.Customer_ID = f.Customer_ID
 LEFT JOIN retencion_cte r ON c.Customer_ID = r.Customer_ID
@@ -89,16 +85,12 @@ GROUP BY
     c.GENERO,
     c.STATUS_SOCIAL,
     c.RENTA_MEDIA_ESTIMADA,
-    c.CODIGO_POSTAL,
+    c.CP,
     c.poblacion,
     c.provincia,
+    c.lat,
+    c.lon,
     c.Max_Mosaic_G,
     c.ENCUESTA_ZONA_CLIENTE_VENTA,
     c.ENCUESTA_CLIENTE_ZONA_TALLER,
     r.retencion_estimado;
-
-ALTER TABLE client_insights
-ADD CONSTRAINT PK_client_insights PRIMARY KEY (Customer_ID);
-
--- Mostrar los registros de la tabla generada.
-SELECT * FROM client_insights;

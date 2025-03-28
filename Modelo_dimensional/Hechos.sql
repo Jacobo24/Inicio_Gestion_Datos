@@ -24,8 +24,6 @@ SELECT
     edad.[Car_Age],
     rev.[km_ultima_revision],
     rev.[Revisiones],
-    cp.[lon],
-    cp.[lat],
     -- Cálculo de Margen en Euros Bruto
     ROUND(sales.[PVP] * costes.[Margen] * 0.01 * (1 - sales.[IMPUESTOS] / 100), 2) AS Margen_eur_bruto,
 
@@ -59,7 +57,7 @@ SELECT
                     ELSE 1
                  END
         -- Caso 4: Otros casos inesperados: Churn por precaución
-        ELSE 1
+        ELSE 0
     END AS Churn
 
 FROM [DATAEX].[001_sales] sales

@@ -20,7 +20,7 @@ SELECT
     costes.[Comisión_marca],
     logistic.[Lead_compra],
     logistic.[fue_Lead],
-    CASE WHEN [DIAS_DESDE_ULTIMA_REVISION] = '' THEN 0 ELSE TRY_CAST([DIAS_DESDE_ULTIMA_REVISION] AS INT) END AS DIAS_DESDE_ULTIMA_REVISION,
+    CASE WHEN [DIAS_DESDE_ULTIMA_REVISION] = '' THEN 0 ELSE TRY_CAST([DIAS_DESDE_ULTIMA_REVISION] AS INT) END AS DIAS_DESDE_ULTIMA_REVISION, -- Reemplazo de NULL por 0
     edad.[Car_Age],
     rev.[km_ultima_revision],
     rev.[Revisiones],

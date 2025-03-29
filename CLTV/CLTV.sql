@@ -6,8 +6,7 @@ DECLARE
     @b_edad FLOAT,
     @b_km FLOAT,
     @b_revisiones FLOAT,
-    @b_margen FLOAT,
-    @b_dias FLOAT;
+    @b_margen FLOAT;
 
 -- Carga de Coeficientes: Extracción de los coeficientes del modelo previamente entrenado.
 SELECT
@@ -16,8 +15,7 @@ SELECT
     @b_edad       = MAX(CASE WHEN Variable = 'Edad_Media_Coche' THEN Coeficiente END),
     @b_km         = MAX(CASE WHEN Variable = 'Km_Medio_Por_Revision' THEN Coeficiente END),
     @b_revisiones = MAX(CASE WHEN Variable = 'Revision' THEN Coeficiente END),
-    @b_margen     = MAX(CASE WHEN Variable = 'Margen' THEN Coeficiente END),
-    @b_dias       = MAX(CASE WHEN Variable = 'DIAS_DESDE_ULTIMA_REVISION' THEN Coeficiente END)
+    @b_margen     = MAX(CASE WHEN Variable = 'Margen' THEN Coeficiente END)
 FROM churn_coef;
 
 -- CTE Retención: Calcular la probabilidad de retención para cada cliente.
@@ -31,8 +29,7 @@ WITH retencion_cte AS (
                 MAX(f.Car_Age) * @b_edad +
                 AVG(f.km_ultima_revision) * @b_km +
                 AVG(f.Revisiones) * @b_revisiones +
-                AVG(f.Margen_eur) * @b_margen +
-                AVG(COALESCE(f.DIAS_DESDE_ULTIMA_REVISION, 0)) * @b_dias
+                AVG(f.Margen_eur) * @b_margen
             )
         )) AS retencion_estimado
     FROM dim_client c

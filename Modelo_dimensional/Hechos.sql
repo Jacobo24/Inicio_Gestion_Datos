@@ -20,10 +20,11 @@ SELECT
     costes.[Comisión_marca],
     logistic.[Lead_compra],
     logistic.[fue_Lead],
-    rev.[DIAS_DESDE_ULTIMA_REVISION],
+    CASE WHEN [DIAS_DESDE_ULTIMA_REVISION] = '' THEN 0 ELSE TRY_CAST([DIAS_DESDE_ULTIMA_REVISION] AS INT) END AS DIAS_DESDE_ULTIMA_REVISION,
     edad.[Car_Age],
     rev.[km_ultima_revision],
     rev.[Revisiones],
+
     -- Cálculo de Margen en Euros Bruto
     ROUND(sales.[PVP] * costes.[Margen] * 0.01 * (1 - sales.[IMPUESTOS] / 100), 2) AS Margen_eur_bruto,
 
